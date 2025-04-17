@@ -1,112 +1,132 @@
 import React, { useState } from 'react';
 import './dash.css';
+import { FaBell, FaUserCircle, FaSearch } from 'react-icons/fa';
 
-const topics = [
-  'Computer Science', 'Mechanical Engineering', 'Electrical Engineering',
-  'Civil Engineering', 'Electronics', 'Mathematics', 'Physics', 'Biology'
-];
-
-const Dashboard = () => {
-  const [questions, setQuestions] = useState([]);
-  const [newQuestion, setNewQuestion] = useState('');
-  const [selectedTopic, setSelectedTopic] = useState('');
-  const [answers, setAnswers] = useState({});
-  const [filterTopic, setFilterTopic] = useState('');
-
-  const handleQuestionSubmit = (e) => {
-    e.preventDefault();
-    if (newQuestion.trim() !== '' && selectedTopic !== '') {
-      setQuestions([
-        ...questions,
-        { text: newQuestion, id: Date.now(), topic: selectedTopic, answers: [] }
-      ]);
-      setNewQuestion('');
-      setSelectedTopic('');
+const Dash = () => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [questions, setQuestions] = useState([
+    {
+      id: 1,
+      text: 'How to implement authentication in React?',
+      author: 'Alice',
+      time: '2 hours ago',
+      status: 'answered',
+      votes: 12,
+      tags: ['React', 'Auth']
+    },
+    {
+      id: 2,
+      text: 'What is the difference between let and var in JavaScript?',
+      author: 'Bob',
+      time: '1 day ago',
+      status: 'unanswered',
+      votes: 8,
+      tags: ['JavaScript', 'Variables']
     }
-  };
-
-  const handleAnswerChange = (e, qid) => {
-    setAnswers({ ...answers, [qid]: e.target.value });
-  };
-
-  const handleAnswerSubmit = (qid) => {
-    if (answers[qid]?.trim()) {
-      const updated = questions.map(q =>
-        q.id === qid ? { ...q, answers: [...q.answers, answers[qid]] } : q
-      );
-      setQuestions(updated);
-      setAnswers({ ...answers, [qid]: '' });
-    }
-  };
-
-  const filteredQuestions = filterTopic
-    ? questions.filter((q) => q.topic === filterTopic)
-    : questions;
+  ]);
 
   return (
     <div className="dashboard">
-      <h2>Ask or Answer Questions</h2>
-
-      <form onSubmit={handleQuestionSubmit} className="ask-form">
-        <textarea
-          placeholder="Ask your question..."
-          value={newQuestion}
-          onChange={(e) => setNewQuestion(e.target.value)}
-          required
-        />
-        <select
-          value={selectedTopic}
-          onChange={(e) => setSelectedTopic(e.target.value)}
-          required
-        >
-          <option value="">Select Topic</option>
-          {topics.map((topic, idx) => (
-            <option key={idx} value={topic}>{topic}</option>
-          ))}
-        </select>
-        <button type="submit">Post Question</button>
-      </form>
-
-      <div className="filter-section">
-        <label>View Questions by Topic: </label>
-        <select value={filterTopic} onChange={(e) => setFilterTopic(e.target.value)}>
-          <option value="">All Topics</option>
-          {topics.map((topic, idx) => (
-            <option key={idx} value={topic}>{topic}</option>
-          ))}
-        </select>
+      {/* Top Navigation */}
+      <div className="top-nav">
+        <div className="logo">Q&A Hub</div>
+        <div className="search-bar">
+          <FaSearch />
+          <input type="text" placeholder="Search questions..." />
+        </div>
+        <div className="nav-icons">
+          <div className="notif">
+            <FaBell />
+            <span className="badge">3</span>
+          </div>
+          <div
+            className="profile"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+          >
+            <FaUserCircle />
+            {dropdownOpen && (
+              <div className="dropdown">
+                <div>View Profile</div>
+                <div>Logout</div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="question-list">
-        {filteredQuestions.length === 0 ? (
-          <p>No questions posted yet.</p>
-        ) : (
-          filteredQuestions.map((q) => (
-            <div key={q.id} className="question-card">
-              <p className="question-text"><strong>Q:</strong> {q.text}</p>
-              <p className="question-topic"><em>Topic: {q.topic}</em></p>
+      {/* Layout Wrapper */}
+      <div className="content">
+        {/* Left Sidebar */}
+        <div className="sidebar">
+          <div className="menu">
+            <div className="menu-item active">Dashboard</div>
+            <div className="menu-item">My Questions</div>
+            <div className="menu-item">Bookmarks</div>
+            <div className="menu-item">Help Center</div>
+          </div>
+          <div className="tags">
+            <h4>Popular Tags</h4>
+            <span className="tag">React</span>
+            <span className="tag">JavaScript</span>
+            <span className="tag">CSS</span>
+          </div>
+        </div>
 
-              <div className="answers">
-                {q.answers.map((ans, idx) => (
-                  <p key={idx} className="answer"><strong>A:</strong> {ans}</p>
-                ))}
-              </div>
+        {/* Middle Section */}
+        <div className="main">
+          <button className="ask-btn">Ask a Question</button>
 
-              <div className="answer-form">
-                <input
-                  type="text"
-                  placeholder="Write your answer..."
-                  value={answers[q.id] || ''}
-                  onChange={(e) => handleAnswerChange(e, q.id)}
-                />
-                <button onClick={() => handleAnswerSubmit(q.id)}>Submit</button>
+          <div className="sort-tabs">
+            <button className="tab active">Recently Asked</button>
+            <button className="tab">Unanswered</button>
+            <button className="tab">Most Popular</button>
+          </div>
+
+          <div className="questions">
+            {questions.map((q) => (
+              <div className="question-card" key={q.id}>
+                <div className="q-text">{q.text}</div>
+                <div className="q-tags">
+                  {q.tags.map((tag, idx) => (
+                    <span key={idx} className="tag-badge">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="q-footer">
+                  <span>{q.author} • {q.time}</span>
+                  <span
+                    className={`status ${q.status}`}
+                  >
+                    {q.status}
+                  </span>
+                  <span className="votes">{q.votes} votes</span>
+                </div>
               </div>
-            </div>
-          ))
-        )}
+            ))}
+          </div>
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="rightbar">
+          <div className="trending">
+            <h4>Trending Topics</h4>
+            <ol>
+              <li>React Hooks</li>
+              <li>Tailwind CSS</li>
+              <li>Node.js Performance</li>
+            </ol>
+          </div>
+          <div className="stats">
+            <div className="stat-card">Total Questions: 102</div>
+            <div className="stat-card">Total Answers: 89</div>
+            <div className="stat-card">Users: 56</div>
+            <div className="stat-card">Tags: 14</div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default Dash;

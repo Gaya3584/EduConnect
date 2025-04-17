@@ -1,31 +1,22 @@
 import React, { useState } from 'react';
-
-
+import { useNavigate } from 'react-router-dom';
+import { auth, googleProvider } from './firebase';
+import {
+  createUserWithEmailAndPassword,
+  signInWithPopup
+} from 'firebase/auth';
 import './sign.css';
 
-
-
 const Sign = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
-    topic: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
-
-  const topics = [
-    'Computer Science',
-    'Electronics',
-    'Mechanical Engineering',
-    'Civil Engineering',
-    'Mathematics',
-    'Physics',
-    'Biology',
-    'Economics',
-    'Psychology',
-    'Literature'
-  ];
+  const [isLoading, setIsLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,66 +24,138 @@ const Sign = () => {
       ...prev,
       [name]: value
     }));
+    
+    // Clear password error when user types in password fields
+    if (name === 'password' || name === 'confirmPassword') {
+      setPasswordError('');
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const validatePassword = () => {
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      setPasswordError('Passwords do not match');
+      return false;
+    }
+    
+    if (formData.password.length < 6) {
+      setPasswordError('Password must be at least 6 characters');
+      return false;
+    }
+    
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validatePassword()) {
       return;
     }
-    console.log('Form submitted:', formData);
-    // Further actions (API, DB, etc.)
+    
+    setIsLoading(true);
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+      
+      console.log('User created:', userCredential.user);
+      // You could also update the user profile to add the name
+      setIsLoading(false);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Signup error:', error.message);
+      alert(error.message);
+      setIsLoading(false);
+    }
   };
-  
+
+  const handleGoogleSignUp = async () => {
+    setIsLoading(true);
+    
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      console.log('Google Sign-In successful:', result.user);
+      setIsLoading(false);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Google Sign-In error:', error.message);
+      alert(error.message);
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className='signup-page'>
-    <div className="signup-container">
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit} className="signup-form">
-        <input 
-          type="text" 
-          name="name" 
-          placeholder="Name"
-          value={formData.name}
-          onChange={handleChange}
-          required 
-        />
+      <div className="signup-container">
+        <h2>Sign Up</h2>
+        <form onSubmit={handleSubmit} className="signup-form">
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+          
+          {passwordError && <p style={{ color: '#ef4444', fontSize: '0.875rem', marginTop: '-10px' }}>{passwordError}</p>}
+
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Creating Account...' : 'Register'}
+          </button>
+        </form>
+
+        <div className="divider">
+          <span>OR</span>
+        </div>
         
-
-        <input 
-          type="email" 
-          name="email" 
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required 
-        />
-
-        <input 
-          type="password" 
-          name="password" 
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required 
-        />
-
-        <input 
-          type="password" 
-          name="confirmPassword" 
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          required 
-        />
-
-        <button type="submit">Register</button>
-       
-
-      </form>
-    </div>
+        <div className="google-signup">
+          <button 
+            className="google-btn" 
+            onClick={handleGoogleSignUp}
+            disabled={isLoading}
+          >
+            Sign Up with Google
+          </button>
+        </div>
+        
+        <div className="signin-link">
+          <p>Already have an account? <a href="#login" onClick={(e) => {
+            e.preventDefault();
+            navigate('/login');
+          }}>Sign in</a></p>
+        </div>
+      </div>
     </div>
   );
 };

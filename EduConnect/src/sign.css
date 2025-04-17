@@ -1,14 +1,7 @@
 /* Fullscreen background and centered sign-up card */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef);
 
-}
 .signup-page {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef);
   min-height: 100vh;
   width: 100%;
   display: flex;
@@ -16,11 +9,43 @@ html, body {
   align-items: center;
   position: relative;
   overflow: hidden;
-  padding: 600px; /* <-- Correct value */
+  padding: 2rem; /* Fixed from 600px */
+}
+
+/* Animated background elements */
+.signup-page::before,
+.signup-page::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 0;
+  animation: float 15s infinite ease-in-out;
+}
+
+.signup-page::before {
+  width: 300px;
+  height: 300px;
+  top: -100px;
+  right: -100px;
+}
+
+.signup-page::after {
+  width: 200px;
+  height: 200px;
+  bottom: -50px;
+  left: -50px;
+  animation: float 12s infinite ease-in-out reverse;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(30px, 50px) rotate(120deg); }
+  66% { transform: translate(-20px, 20px) rotate(240deg); }
+  100% { transform: translate(0, 0) rotate(360deg); }
 }
 
 .signup-container {
-  
   max-width: 450px;
   width: 100%;
   background: rgba(255, 255, 255, 0.9);
@@ -32,6 +57,8 @@ html, body {
   animation: slideUp 0.8s ease forwards;
   transform: translateY(30px);
   opacity: 0;
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes slideUp {
@@ -96,6 +123,7 @@ html, body {
   box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.4);
   position: relative;
   overflow: hidden;
+  margin-top: 10px;
 }
 
 .signup-form button::before {
@@ -119,6 +147,82 @@ html, body {
 .signup-form button:hover {
   background: #4338ca;
   transform: translateY(-3px);
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  opacity: 0;
+  animation: fadeIn 0.8s 0.5s forwards;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.divider span {
+  padding: 0 10px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* Google sign up button */
+.google-signup {
+  margin-top: 10px;
+  opacity: 0;
+  animation: fadeIn 0.8s 0.6s forwards;
+}
+
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  background: white;
+  color: #333;
+  border: 1px solid #e5e7eb;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.google-btn:hover {
+  background: #f9fafb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Sign in link */
+.signin-link {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #6b7280;
+  opacity: 0;
+  animation: fadeIn 0.8s 0.7s forwards;
+}
+
+.signin-link a {
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.signin-link a:hover {
+  color: #4338ca;
+  text-decoration: underline;
 }
 
 /* Responsive design */

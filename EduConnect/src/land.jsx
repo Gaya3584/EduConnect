@@ -1,10 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './land.css';
-import clip from './assets/clip.jpg'; // Import the image
+import clip from './assets/clip.jpg';
 
 const Land = () => {
   const navigate = useNavigate();
+  
+  const handleLogin = () => navigate('/login');
+  const handleSignup = () => navigate('/signup');
   
   return (
     <div className="landing-page">
@@ -13,8 +16,8 @@ const Land = () => {
           <h1>Hey Everyone!</h1>
           <p>"Share your doubts, for in seeking answers, we all grow wiser together."</p>
           <div className="buttons">
-            <button className="btn login" onClick={() => navigate('/login')}>Login</button>
-            <button className="btn signup" onClick={() => navigate('/signup')}>Sign Up</button>
+            <button className="btn login" onClick={handleLogin}>Login</button>
+            <button className="btn signup" onClick={handleSignup}>Sign Up</button>
           </div>
         </div>
         <div className="image-section">
