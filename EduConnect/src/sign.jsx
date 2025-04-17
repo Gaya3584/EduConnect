@@ -24,8 +24,7 @@ const Sign = () => {
       ...prev,
       [name]: value
     }));
-    
-    // Clear password error when user types in password fields
+
     if (name === 'password' || name === 'confirmPassword') {
       setPasswordError('');
     }
@@ -36,22 +35,22 @@ const Sign = () => {
       setPasswordError('Passwords do not match');
       return false;
     }
-    
+
     if (formData.password.length < 6) {
       setPasswordError('Password must be at least 6 characters');
       return false;
     }
-    
+
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validatePassword()) {
       return;
     }
-    
+
     setIsLoading(true);
 
     try {
@@ -60,9 +59,8 @@ const Sign = () => {
         formData.email,
         formData.password
       );
-      
+
       console.log('User created:', userCredential.user);
-      // You could also update the user profile to add the name
       setIsLoading(false);
       navigate('/dashboard');
     } catch (error) {
@@ -74,7 +72,7 @@ const Sign = () => {
 
   const handleGoogleSignUp = async () => {
     setIsLoading(true);
-    
+
     try {
       const result = await signInWithPopup(auth, googleProvider);
       console.log('Google Sign-In successful:', result.user);
@@ -88,10 +86,10 @@ const Sign = () => {
   };
 
   return (
-    <div className='signup-page'>
-      <div className="signup-container">
+    <div className='signup-pagez'>
+      <div className="signup-containerz">
         <h2>Sign Up</h2>
-        <form onSubmit={handleSubmit} className="signup-form">
+        <form onSubmit={handleSubmit} className="signup-formz">
           <input
             type="text"
             name="name"
@@ -127,7 +125,7 @@ const Sign = () => {
             onChange={handleChange}
             required
           />
-          
+
           {passwordError && <p style={{ color: '#ef4444', fontSize: '0.875rem', marginTop: '-10px' }}>{passwordError}</p>}
 
           <button type="submit" disabled={isLoading}>
@@ -135,21 +133,21 @@ const Sign = () => {
           </button>
         </form>
 
-        <div className="divider">
+        <div className="dividerz">
           <span>OR</span>
         </div>
-        
-        <div className="google-signup">
+
+        <div className="google-signupz">
           <button 
-            className="google-btn" 
+            className="google-btnz" 
             onClick={handleGoogleSignUp}
             disabled={isLoading}
           >
             Sign Up with Google
           </button>
         </div>
-        
-        <div className="signin-link">
+
+        <div className="signin-linkz">
           <p>Already have an account? <a href="#login" onClick={(e) => {
             e.preventDefault();
             navigate('/login');
